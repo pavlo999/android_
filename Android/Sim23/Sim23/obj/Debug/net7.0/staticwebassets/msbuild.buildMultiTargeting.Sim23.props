@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Sim23.props" />
+</Project>
