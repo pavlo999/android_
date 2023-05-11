@@ -8,4 +8,8 @@
     <item
         android:id="@+id/m_create"
         android:title="Додати" />
+
+    <item
+        android:id="@+id/m_registration"
+        android:title="Реєстрація" />
 </menu>

@@ -1,9 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sim23.Data.Entitys;
+using Sim23.Data.Entitys.Identity;
 
 namespace Sim23.Data
 {
-    public class AppEFContext : DbContext
+    public class AppEFContext : IdentityDbContext<UserEntity, RoleEntity, int,
+        IdentityUserClaim<int>, UserRoleEntity, IdentityUserLogin<int>,
+        IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public AppEFContext(DbContextOptions<AppEFContext> options)
             : base(options)
@@ -15,6 +20,21 @@ namespace Sim23.Data
         {
             base.OnModelCreating(builder);
             // flyent validation...
+            builder.Entity<UserRoleEntity>(ur =>
+            {
+                ur.HasKey(ur => new { ur.UserId, ur.RoleId });
+
+                ur.HasKey(ur => new { ur.UserId, ur.RoleId });
+                ur.HasOne(ur => ur.Role)
+                   .WithMany(r => r.UserRoles)
+                   .HasForeignKey(r => r.RoleId)
+                   .IsRequired();
+
+                ur.HasOne(ur => ur.User)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(u => u.UserId)
+                    .IsRequired();
+            });
         }
     }
 }

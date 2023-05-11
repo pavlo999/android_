@@ -18,18 +18,13 @@ import com.example.sim.BaseActivity;
 import com.example.sim.ChangeImageActivity;
 import com.example.sim.MainActivity;
 import com.example.sim.R;
-import com.example.sim.application.HomeApplication;
 import com.example.sim.dto.category.CategoryCreateDTO;
-import com.example.sim.dto.category.CategoryItemDTO;
-import com.example.sim.service.CategoryNetwork;
+import com.example.sim.service.ApplicationNetwork;
 import com.example.sim.utils.CommonUtils;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.oginotihiro.cropview.CropView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -108,7 +103,7 @@ public class CategoryCreateActivity extends BaseActivity {
 
     void requestServer(CategoryCreateDTO model) {
         CommonUtils.showLoading();
-        CategoryNetwork
+        ApplicationNetwork
                 .getInstance()
                 .getJsonApi()
                 .addCategory(model)

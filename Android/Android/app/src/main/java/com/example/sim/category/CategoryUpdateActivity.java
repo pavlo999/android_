@@ -2,8 +2,6 @@ package com.example.sim.category;
 
 import static com.example.sim.category.CategoryCreateActivity.SELECT_IMAGE_RESULT;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -21,10 +19,9 @@ import com.example.sim.ChangeImageActivity;
 import com.example.sim.MainActivity;
 import com.example.sim.R;
 import com.example.sim.constants.Urls;
-import com.example.sim.dto.category.CategoryCreateDTO;
 import com.example.sim.dto.category.CategoryItemDTO;
 import com.example.sim.dto.category.CategoryUpdateDTO;
-import com.example.sim.service.CategoryNetwork;
+import com.example.sim.service.ApplicationNetwork;
 import com.example.sim.utils.CommonUtils;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -125,7 +122,7 @@ public class CategoryUpdateActivity extends BaseActivity {
 
     void requestServerById(int id) {
         CommonUtils.showLoading();
-        CategoryNetwork
+        ApplicationNetwork
                 .getInstance()
                 .getJsonApi()
                 .getById(id)
@@ -155,7 +152,7 @@ public class CategoryUpdateActivity extends BaseActivity {
 
     void requestServerUpdate(CategoryUpdateDTO model) {
         CommonUtils.showLoading();
-        CategoryNetwork
+        ApplicationNetwork
                 .getInstance()
                 .getJsonApi()
                 .updateCategory(model)

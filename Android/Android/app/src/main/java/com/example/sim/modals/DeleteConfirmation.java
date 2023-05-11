@@ -1,7 +1,5 @@
 package com.example.sim.modals;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +11,7 @@ import com.example.sim.BaseActivity;
 import com.example.sim.MainActivity;
 import com.example.sim.R;
 import com.example.sim.application.HomeApplication;
-import com.example.sim.service.CategoryNetwork;
+import com.example.sim.service.ApplicationNetwork;
 import com.example.sim.utils.CommonUtils;
 
 import retrofit2.Call;
@@ -68,7 +66,7 @@ public class DeleteConfirmation extends BaseActivity {
 
     void requestServerDeleteCategory(int id) {
         CommonUtils.showLoading();
-        CategoryNetwork
+        ApplicationNetwork
                 .getInstance()
                 .getJsonApi()
                 .delete(id)
