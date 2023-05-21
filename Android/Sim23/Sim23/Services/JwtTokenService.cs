@@ -24,6 +24,9 @@ namespace Sim23.Services
             List<Claim> claims = new List<Claim>()
             {
                 new Claim("name", user.Email),
+                new Claim("firsName",user.FirstName),
+                new Claim("lastName",user.LastName),
+                new Claim("email",user.Email),
                 new Claim("image", user.Image??"user.jpg")
             };
             foreach (var role in roles)

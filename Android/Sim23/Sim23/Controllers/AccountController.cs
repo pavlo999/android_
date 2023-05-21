@@ -33,7 +33,7 @@ namespace Sim23.Controllers
                 return BadRequest();
 
             var token = await _jwtTokenService.CreateToken(user);
-            return Ok(token);
+            return Ok(new { token });
         }
 
         [HttpPost("register")]

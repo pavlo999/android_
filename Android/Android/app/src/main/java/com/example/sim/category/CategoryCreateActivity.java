@@ -115,11 +115,11 @@ public class CategoryCreateActivity extends BaseActivity {
                             System.out.println("----Category Added successfuly");
                             startActivity(mainActivity);
                             finish();
-                            CommonUtils.hideLoading();
                         }
                         else{
                             System.out.println("Server erroe");
                         }
+                        CommonUtils.hideLoading();
                     }
 
                     @Override

@@ -5,7 +5,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.example.sim.account.LoginActivity;
+import com.example.sim.application.HomeApplication;
 import com.example.sim.category.CategoriesAdapter;
 import com.example.sim.category.CategoryUpdateActivity;
 import com.example.sim.dto.category.CategoryItemDTO;
@@ -13,6 +16,7 @@ import com.example.sim.modals.DeleteConfirmation;
 import com.example.sim.service.ApplicationNetwork;
 import com.example.sim.utils.CommonUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +40,13 @@ public class MainActivity extends BaseActivity {
 //                .apply(new RequestOptions().override(600))
 //                .into(iv);
 
+        String Token = HomeApplication.getInstance().getToken();
         rc = findViewById(R.id.rcvCategories);
         rc.setHasFixedSize(true);
         rc.setLayoutManager(new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false));
-        rc.setAdapter(new CategoriesAdapter(new ArrayList<>(), null,null));
+        rc.setAdapter(new CategoriesAdapter(new ArrayList<>(),
+                MainActivity.this::onClickByItemEdit,
+                MainActivity.this::onClickByItemDelete));
         requestServer();
     }
 
@@ -52,12 +59,15 @@ public class MainActivity extends BaseActivity {
                 .enqueue(new Callback<List<CategoryItemDTO>>() {
                     @Override
                     public void onResponse(Call<List<CategoryItemDTO>> call, Response<List<CategoryItemDTO>> response) {
+                        if(response.isSuccessful())
+                        {
                         List<CategoryItemDTO> data = response.body();
                         adapter = new CategoriesAdapter(data,
                                 MainActivity.this::onClickByItemEdit,
                                 MainActivity.this::onClickByItemDelete);
                         rc.setAdapter(adapter);
                         //int a=5;
+                        }
                         CommonUtils.hideLoading();
                     }
 

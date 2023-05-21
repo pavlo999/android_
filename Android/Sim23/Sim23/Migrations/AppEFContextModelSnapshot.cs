@@ -73,10 +73,12 @@ namespace Sim23.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
@@ -97,10 +99,12 @@ namespace Sim23.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -140,7 +144,12 @@ namespace Sim23.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("tblCategories");
                 });
@@ -304,6 +313,15 @@ namespace Sim23.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sim23.Data.Entitys.CategoryEntity", b =>
+                {
+                    b.HasOne("Sim23.Data.Entitys.Identity.UserEntity", "User")
+                        .WithMany("Categories")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Sim23.Data.Entitys.Identity.UserRoleEntity", b =>
                 {
                     b.HasOne("Sim23.Data.Entitys.Identity.RoleEntity", "Role")
@@ -330,6 +348,8 @@ namespace Sim23.Migrations
 
             modelBuilder.Entity("Sim23.Data.Entitys.Identity.UserEntity", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618

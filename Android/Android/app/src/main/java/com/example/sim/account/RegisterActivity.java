@@ -8,15 +8,18 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.sim.BaseActivity;
 import com.example.sim.ChangeImageActivity;
 import com.example.sim.MainActivity;
 import com.example.sim.R;
 import com.example.sim.dto.account.RegisterDTO;
+import com.example.sim.dto.account.ValidationRegisterDTO;
 import com.example.sim.service.ApplicationNetwork;
 import com.example.sim.utils.CommonUtils;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,7 +60,7 @@ public class RegisterActivity extends BaseActivity {
         registerDTO.setEmail(tfEmail.getEditText().getText().toString());
         registerDTO.setPassword(tfPassword.getEditText().getText().toString());
         registerDTO.setConfirmPassword(tfConfirmPassword.getEditText().getText().toString());
-        registerDTO.setPhoto(uriGetBase64(uri));
+        registerDTO.setImageBase64(uriGetBase64(uri));
         CommonUtils.showLoading();
         ApplicationNetwork.getInstance()
                 .getAccountJsonApi()
@@ -65,9 +68,22 @@ public class RegisterActivity extends BaseActivity {
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                        if(response.isSuccessful())
+                        {
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else
+                        {
+                            try {
+                                String resp = response.errorBody().string();
+                                showErrorsServer(resp);
+                            }catch(Exception ex) {
+                                System.out.println("Error try");;
+                            }
+//                            Toast.makeText(RegisterActivity.this,"Не вірно вказані данні" , Toast.LENGTH_LONG).show();
+                        }
                         CommonUtils.hideLoading();
                     }
 
@@ -78,6 +94,47 @@ public class RegisterActivity extends BaseActivity {
                 });
     }
 
+    private void showErrorsServer(String json){
+        Gson gson = new Gson();
+        ValidationRegisterDTO result = gson.fromJson(json,ValidationRegisterDTO.class);
+        String str ="";
+        if (result.getErrors().getEmail()!=null)
+        {
+            for (String item:result.getErrors().getEmail())
+                str+=item;
+            tfEmail.setError(str);
+        }
+        if (result.getErrors().getFirstName()!=null)
+        {
+            str ="";
+            for (String item:result.getErrors().getFirstName())
+                str+=item;
+            tfFirstName.setError(str);
+        }
+        if (result.getErrors().getLastName()!=null)
+        {
+            str ="";
+            for (String item:result.getErrors().getLastName())
+                str+=item;
+            tfLastName.setError(str);
+        }
+
+        if (result.getErrors().getPassword()!=null)
+        {
+            str ="";
+            for (String item:result.getErrors().getPassword())
+                str+=item;
+            tfPassword.setError(str);
+        }
+        if (result.getErrors().getConfirmPassword()!=null)
+        {
+            str ="";
+            for (String item:result.getErrors().getConfirmPassword())
+                str+=item;
+            tfConfirmPassword.setError(str);
+        }
+//        Toast.makeText(this,str,Toast.LENGTH_SHORT).show();
+    }
     private String uriGetBase64(Uri uri) {
         try {
             Bitmap bitmap = null;

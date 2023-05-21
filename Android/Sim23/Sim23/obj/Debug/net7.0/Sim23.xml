@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sim23</name>
+    </assembly>
+    <members>
+        <member name="T:Sim23.Migrations.AddtblIdentity">
+            <inheritdoc />
+        </member>
+        <member name="M:Sim23.Migrations.AddtblIdentity.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Sim23.Migrations.AddtblIdentity.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Sim23.Migrations.AddtblIdentity.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Sim23.Migrations.AddcoluserIdtblCategories">
+            <inheritdoc />
+        </member>
+        <member name="M:Sim23.Migrations.AddcoluserIdtblCategories.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Sim23.Migrations.AddcoluserIdtblCategories.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Sim23.Migrations.AddcoluserIdtblCategories.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="P:Sim23.Models.LoginViewModel.Email">
+            <summary>
+            
+            </summary>
+            <example>muxa@gmail.com</example>
+        </member>
+        <member name="P:Sim23.Models.LoginViewModel.Password">
+            <summary>
+            
+            </summary>
+            <example>123456</example>
+        </member>
+    </members>
+</doc>

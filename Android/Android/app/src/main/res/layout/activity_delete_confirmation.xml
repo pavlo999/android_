@@ -34,14 +34,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:text="Delete" />
+                android:text="Так" />
 
             <Button
                 android:id="@+id/btn_calcel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Cancel" />
+                android:text="Ні" />
 
         </LinearLayout>
     </LinearLayout>

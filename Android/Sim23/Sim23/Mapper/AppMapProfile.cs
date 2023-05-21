@@ -14,6 +14,7 @@ namespace Sim23.Mapper
             CreateMap<CategoryCreateItemVM, CategoryEntity>()
                 .ForMember(x => x.Image, opt => opt.Ignore())
                 .ForMember(x => x.DateCreated, opt => opt.MapFrom(x => DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)));
+
         }
     }
 }

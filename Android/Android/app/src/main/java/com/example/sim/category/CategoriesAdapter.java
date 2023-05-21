@@ -14,6 +14,7 @@ import com.example.sim.application.HomeApplication;
 import com.example.sim.constants.Urls;
 import com.example.sim.dto.category.CategoryItemDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoryCartViweHolder> {

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sim23.Data;
+using Sim23.Data.Constants;
 using Sim23.Data.Entitys;
+using Sim23.Data.Entitys.Identity;
 using Sim23.Helpers;
 using Sim23.Models;
 
@@ -11,24 +15,44 @@ namespace Sim23.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly AppEFContext _appEFContext;
-        
-        public CategoriesController(IMapper mapper, AppEFContext appEFContext)
+        private readonly UserManager<UserEntity> _userManager;
+
+        public CategoriesController(IMapper mapper, AppEFContext appEFContext, UserManager<UserEntity> userManager)
         {
             _mapper = mapper;
             _appEFContext = appEFContext;
+            _userManager = userManager;
         }
 
         [HttpGet("list")]
         public async Task<IActionResult> Get()
         {
+            string userName = User.Claims.First().Value;
+            var user = await _userManager.FindByEmailAsync(userName);
+
+            var isAdministrator = await _userManager.GetRolesAsync(user);
+            bool isAdm = isAdministrator.Where(r => r.Contains(Roles.Admin)).FirstOrDefault() != null;
+            if (isAdm)
+            {
+                var allModels = await _appEFContext.Categories
+                   .Where(x => x.IsDeleted == false)
+                     .OrderBy(x => x.Priority)
+                   .Select(x => _mapper.Map<CategoryItemViewModel>(x))
+                   .ToListAsync();
+
+                return Ok(allModels);
+            }
+
             var model = await _appEFContext.Categories
-                .Where(x=>x.IsDeleted == false)
-                .OrderBy(x=>x.Priority)
-                .Select(x=>_mapper.Map<CategoryItemViewModel>(x))
+                .Where(x => x.IsDeleted == false)
+                .Where(x => x.UserId == user.Id)
+                .OrderBy(x => x.Priority)
+                .Select(x => _mapper.Map<CategoryItemViewModel>(x))
                 .ToListAsync();
 
             return Ok(model);
@@ -37,9 +61,12 @@ namespace Sim23.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            string userName = User.Claims.First().Value;
+            var user = await _userManager.FindByNameAsync(userName);
+
             var category = await _appEFContext.Categories
                 .Where(x => x.IsDeleted == false)
-                .SingleOrDefaultAsync(x => x.Id==id);
+                .SingleOrDefaultAsync(x => x.Id == id && x.UserId == user.Id);
             if (category is null)
                 return NotFound();
 
@@ -49,13 +76,17 @@ namespace Sim23.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CategoryCreateItemVM model)
         {
+            string userName = User.Claims.First().Value;
+            var user = await _userManager.FindByNameAsync(userName);
+
             try
             {
                 var cat = _mapper.Map<CategoryEntity>(model);
+                cat.UserId = user.Id;
                 cat.Image = ImageWorker.SaveImage(model.ImageBase64);
                 await _appEFContext.Categories.AddAsync(cat);
                 await _appEFContext.SaveChangesAsync();
-                return Ok(_mapper.Map<CategoryItemViewModel>(model));
+                return Ok(_mapper.Map<CategoryItemViewModel>(cat));
             }
             catch (Exception ex)
             {
@@ -66,7 +97,12 @@ namespace Sim23.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> Put([FromBody] CategoryUpdateeItemVM model)
         {
-            var cat = await _appEFContext.Categories.FindAsync(model.Id);
+            string userName = User.Claims.First().Value;
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var cat = await _appEFContext.Categories
+                                            .Where(x => x.IsDeleted == false)
+                                            .SingleOrDefaultAsync(x => x.Id == model.Id && x.UserId == user.Id);
             if (cat == null)
                 return NotFound();
             else
@@ -74,7 +110,7 @@ namespace Sim23.Controllers
                 cat.Name = model.Name;
                 cat.Description = model.Description;
                 cat.Priority = model.Priority;
-                if(!string.IsNullOrEmpty(model.ImageBase64))
+                if (!string.IsNullOrEmpty(model.ImageBase64))
                 {
                     ImageWorker.RemoveImage(cat.Image);
                     cat.Image = ImageWorker.SaveImage(model.ImageBase64);
@@ -88,7 +124,22 @@ namespace Sim23.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _appEFContext.Categories.FindAsync(id);
+            string userName = User.Claims.First().Value;
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var isAdministrator = await _userManager.GetRolesAsync(user);
+            CategoryEntity category = null;
+            if (isAdministrator.Where(r => r.Contains(Roles.Admin)) != null)
+            {
+                category = await _appEFContext.Categories.FindAsync(id);
+            }
+            else
+            {
+                category = await _appEFContext.Categories
+                                          .Where(x => x.IsDeleted == false)
+                                          .SingleOrDefaultAsync(x => x.Id == id && x.UserId == user.Id);
+            }
+          
             if (category is null)
                 return NotFound();
             else

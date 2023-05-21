@@ -3,5 +3,7 @@
     <string name="category_name_required">Вкажіть назву. Довжина має бути не менше 3 символів</string>
     <string name="category_priority_required">Вкажіть пріорітет. Значення має бути більше 0</string>
     <string name="category_description_required">Вкажіть опис. Довжина має бути не менше 3 символів</string>
+    <string name="email_required">Не відповідає електроній пошті</string>
+    <string name="password_required">Пароль має бути не менше 6 символів</string>
     <string name="foto_required">Оберіть фотографію</string>
 </resources>

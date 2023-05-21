@@ -1,8 +1,10 @@
 package com.example.sim.service;
 
 import com.example.sim.constants.Urls;
+import com.example.sim.interceptors.JWTInterceptor;
 import com.example.sim.network.AccountApi;
 import com.example.sim.network.CategoriesApi;
+import com.example.sim.network.UserApi;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +21,7 @@ public class ApplicationNetwork {
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .writeTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(20,TimeUnit.SECONDS)
+                .addInterceptor(new JWTInterceptor())
                 .build();
         retrofit = new Retrofit.Builder()
                 .client(httpClient)
@@ -37,5 +40,8 @@ public class ApplicationNetwork {
     }
     public AccountApi getAccountJsonApi(){
         return retrofit.create(AccountApi.class);
+    }
+    public UserApi getUserJsonApi(){
+        return retrofit.create(UserApi.class);
     }
 }

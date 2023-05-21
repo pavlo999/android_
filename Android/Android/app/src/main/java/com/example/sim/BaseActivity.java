@@ -7,8 +7,11 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.sim.account.LoginActivity;
 import com.example.sim.account.RegisterActivity;
+import com.example.sim.application.HomeApplication;
 import com.example.sim.category.CategoryCreateActivity;
+import com.example.sim.user.ProfileActivity;
 import com.example.sim.utils.CommonUtils;
 
 public class BaseActivity extends AppCompatActivity {
@@ -20,6 +23,8 @@ public class BaseActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main,menu);
+        menu.setGroupVisible(R.id.group_anonimus, !HomeApplication.getInstance().isAuth());
+        menu.setGroupVisible(R.id.group_auth, HomeApplication.getInstance().isAuth());
         return true;
     }
 
@@ -55,6 +60,35 @@ public class BaseActivity extends AppCompatActivity {
                     System.out.println("---Problem " + e.getMessage());
                 }
                 return true;
+            case R.id.m_login:
+                try {
+                    intent = new Intent(BaseActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } catch (Exception e) {
+                    System.out.println("---Problem " + e.getMessage());
+                }
+                return true;
+            case R.id.m_logout:
+                try {
+                    HomeApplication.getInstance().deleteToken();
+                    intent = new Intent(BaseActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } catch (Exception e) {
+                    System.out.println("---Problem " + e.getMessage());
+                }
+                return true;
+            case R.id.m_profile:
+                try {
+                    intent = new Intent(BaseActivity.this, ProfileActivity.class);
+                    startActivity(intent);
+                    finish();
+                } catch (Exception e) {
+                    System.out.println("---Problem " + e.getMessage());
+                }
+                return true;
+
             default: return  super.onOptionsItemSelected(item);
         }
     }
